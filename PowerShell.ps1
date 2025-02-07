@@ -18,6 +18,16 @@ function Get-Env
     return $Vars
 }
 
+function Set-EnvironmentVariables
+{
+    param ($Vars)
+    foreach ($Key in $Vars.Keys) {
+        $Value = $Vars[$Key]
+        [System.Environment]::SetEnvironmentVariable($Key, $Value, "User")
+        Write-Host "$Key = $Value (set)"
+    }
+}
+
 function Start-Packer
 {
     param()
@@ -40,7 +50,9 @@ While ($pathStatus -eq $false){
     }
 }
 
-Get-Env($pathToEnv)
+$Vars = Get-Env($pathToEnv)
+echo $Vars
+Set-EnvironmentVariables($Vars)
 
 if ($Input -match "Packer")
 {
