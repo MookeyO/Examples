@@ -1,0 +1,47 @@
+# Docker Compose configuration for GitLab and NGINX
+# Version deprecated
+version: '1'
+
+#Services defines the services (containers) to be run
+services:
+# GitLab service configuration
+  gitlab:
+  # use the latest GitLab CE image
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    restart: always
+    hostname: 'gitlab.il.dev'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.il.dev'
+    ports:
+      - '8929:8929'  # Optional if NGINX handles HTTPS
+      - '22:22'
+    volumes:
+    # Mount volumes with host path to path in container
+      - '${GITLAB_HOME}/config:/etc/gitlab'
+      - '${GITLAB_HOME}/logs:/var/log/gitlab'
+      - '${GITLAB_HOME}/data:/var/opt/gitlab'
+    # Set shared memory size for GitLab
+    shm_size: '256m'
+    # Define the network for GitLab
+    networks:
+      - ildev
+
+  nginx:
+    image: nginx_ildev
+    container_name: nginx
+    restart: always
+    hostname: 'nginx.il.dev'
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./conf.d:/etc/nginx/sites-enabled:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    networks:
+      - ildev
+#define a new docker network
+networks:
+  ildev:
+    driver: bridge

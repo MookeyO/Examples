@@ -1,0 +1,8 @@
+#Choose a base image for the NGINX server
+FROM ubuntu/nginx
+# run a command during build time
+RUN mkdir -p /etc/nginx/ssl
+# copy files from host to container
+COPY ssl/ /etc/nginx/ssl
+
+
