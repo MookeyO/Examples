@@ -1,0 +1,23 @@
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    restart: unless-stopped
+    hostname: 'dockervm3.il.dev'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://dockervm3.il.dev:4443'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+        nginx['redirect_http_to_https'] = true
+        nginx['ssl_certificate'] = "/etc/gitlab/ssl/gitlab.crt"
+        nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/gitlab.key"
+    ports:
+      - '4001:80'    # Optional - for HTTP -> HTTPS redirection
+      - '4443:443'   # HTTPS exposed externally
+      - '2222:22'    # SSH for Git over SSH
+    volumes:
+      - '/home/iladmin/gitlab/config:/etc/gitlab'
+      - '/home/iladmin/gitlab/logs:/var/log/gitlab'
+      - '/home/iladmin/gitlab/data:/var/opt/gitlab'
+      - '/home/iladmin/gitlab/ssl:/etc/gitlab/ssl'
+    shm_size: '256m'

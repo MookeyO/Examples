@@ -1,0 +1,17 @@
+# Docker Compose configuration for GitLab and NGINX
+version: '3.8'  # Use a supported version
+
+services:
+  # NGINX reverse proxy
+  nginx:
+    image: newnginx
+    container_name: nginx
+    restart: always
+    hostname: 'dockervm3.il.dev'
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/ssl:ro
+
